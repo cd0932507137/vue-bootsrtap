@@ -3,8 +3,16 @@
     <h1>{{ msg }}</h1>
     <div class="container">
       <div class="row">
+        <b-form-group label-cols-sm="3" label="搜尋" class="mb-0">
+          <b-input-group>
+            <b-form-input v-model="filter" placeholder="鍵入搜索"></b-form-input>
+            <b-input-group-append>
+              <b-button :disabled="!filter" @click="filter = ''">清除</b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
 
-        <p class="mt-3">Current Page: {{ currentPage }}</p>
+        <p class="mt-3">當前頁面: {{ currentPage }}</p>
 
         <b-table striped hover 
           id="my-table"
@@ -13,7 +21,9 @@
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
           :per-page="perPage"
-          :current-page="currentPage">
+          :filter="filter"
+          :current-page="currentPage"
+          @filtered="onFiltered">
           <template slot="company" slot-scope="row">
             {{ row.value.name }}
           </template> 
@@ -46,6 +56,7 @@ export default {
       currentPage: 1,
       sortBy: 'id',
       sortDesc: false,
+      filter: null,
       fields: [
         { key: 'id', label: 'Id', sortable: true },
         { key: 'name', label: 'Name', sortable: true },
@@ -295,7 +306,14 @@ export default {
     rows() {
       return this.items.length
     }
-  }
+  },
+  methods: {
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    }
+  },  
 }
 </script>
 
