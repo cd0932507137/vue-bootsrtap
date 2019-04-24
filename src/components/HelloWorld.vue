@@ -3,15 +3,28 @@
     <h1>{{ msg }}</h1>
     <div class="container">
       <div class="row">
+
+        <p class="mt-3">Current Page: {{ currentPage }}</p>
+
         <b-table striped hover 
-        :items="items"
-        :fields="fields"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc">
+          id="my-table"
+          :items="items"
+          :fields="fields"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :per-page="perPage"
+          :current-page="currentPage">
           <template slot="company" slot-scope="row">
             {{ row.value.name }}
           </template> 
         </b-table>
+
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+          aria-controls="my-table"
+        ></b-pagination>
       </div>
     </div>
   </div>
@@ -29,6 +42,8 @@ export default {
   name: 'HelloWorld',
   data() {
     return {
+      perPage: 5,
+      currentPage: 1,
       sortBy: 'id',
       sortDesc: false,
       fields: [
@@ -275,6 +290,11 @@ export default {
   },
   props: {
     msg: String
+  },
+  computed: {
+    rows() {
+      return this.items.length
+    }
   }
 }
 </script>
